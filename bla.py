@@ -15,6 +15,9 @@ SOUND = 'Alarm from Assignment - Earth.mp3'
 # TODO: add sound for low/high battery
 CHECK_INTERVAL = 3
 
+# TODO: store settings in the settings file
+#TODO: add tray icon and GUI for settings
+
 def notify(text, sound_file):
 	notification.notify(
 		title="Battery Percentage",
