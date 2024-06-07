@@ -8,10 +8,11 @@ import configparser
 import psutil
 from playsound import playsound
 
-from PyQt6.QtGui import *
-from PyQt6.QtWidgets import *
-from PyQt6.QtCore import QTimer
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
+from PySide6.QtCore import QTimer
 
+from ui_SettingsDialog import Ui_Dialog
 from debug import print_debug_message
 
 # TODO: Delete the following strings used for debugging purposes
@@ -82,6 +83,17 @@ def get_time_left_str(secs_left):
     return time_left_str
 
 
+class SettingsDialog(QMainWindow, Ui_Dialog):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+
+    def accept(self):
+        pass
+
+    def reject(self):
+        pass
+
 class App:
     def __init__(self):
         # Create a Qt application
@@ -90,12 +102,12 @@ class App:
         self.app.setQuitOnLastWindowClosed(False)
 
         # Create a settings dialog
-        self.dialog = QDialog()
+        self.dialog = SettingsDialog()
 
         # Create menu
         menu = QMenu()
-        # settingAction = menu.addAction("Settings")
-        # settingAction.triggered.connect(self.setting)
+        settingAction = menu.addAction("Settings")
+        settingAction.triggered.connect(self.setting)
         exitAction = menu.addAction("Exit")
         exitAction.triggered.connect(sys.exit)
 
@@ -154,9 +166,14 @@ class App:
         sys.exit()
 
     # TODO: Create GUI for settings
-    # def setting(self):
-    #     self.dialog.setWindowTitle("Setting Dialog")
-    #     self.dialog.show()
+    # sound_battery_low = res\mixkit-alert-alarm-1005.wav
+    # sound_battery_high = res\alarm-no3-14864.mp3
+    # check_interval = 3
+    # min_percent = 15
+    # max_percent = 95
+    def setting(self):
+        self.dialog.setWindowTitle("Settings")
+        self.dialog.show()
 
     def notify(self, title, text, sound):
         self.tray.showMessage(title, text)
