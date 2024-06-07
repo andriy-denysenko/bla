@@ -1,83 +1,168 @@
-#!/usr/bin/env python3
+#!/usr/bin/python
 
-# Based on: https://www.geeksforgeeks.org/create-battery-notifier-for-laptop-using-python/
-# By abhisheksrivastaviot18
+import os, sys
+from datetime import timedelta
+
+import configparser
 
 import psutil
-from plyer import notification
 from playsound import playsound
-import time
-import os
+
+from PyQt6.QtGui import *
+from PyQt6.QtWidgets import *
+from PyQt6.QtCore import QTimer
 
 from debug import print_debug_message
 
+# TODO: Delete the following strings used for debugging purposes
 # Debug flag
 IS_DEBUGGING = True
 
-# Default battery levels in percents
-MIN_PERCENT = 15
-MAX_PERCENT = 92
+APP_TITLE = 'Battery Level Alert'
 
-# Default check interval im minutes
-CHECK_INTERVAL = 0.5 #3
+# Read or create configuration
+config_file_name = 'settings.ini'
+config = configparser.ConfigParser()
+
+if not os.path.exists('settings.ini'):
+    config['DEFAULT'] = {
+        'SOUND_BATTERY_LOW': os.path.join('res', 'mixkit-alert-alarm-1005.wav'),
+        'SOUND_BATTERY_HIGH': os.path.join('res', 'alarm-no3-14864.mp3'),
+        'CHECK_INTERVAL': '3',
+        'MIN_PERCENT': '15',
+        'MAX_PERCENT': '95'
+    }
+    with open(config_file_name, 'w') as config_file:
+        config.write(config_file)
+
+config.read(config_file_name)
+
 
 # Sound files
-SOUND_BATTERY_LOW = os.path.join('res', 'mixkit-alert-alarm-1005.wav')
-SOUND_BATTERY_HIGH = os.path.join('res', 'alarm-no3-14864.mp3')
+SOUND_BATTERY_LOW = config['DEFAULT']['SOUND_BATTERY_LOW']
+SOUND_BATTERY_HIGH = config['DEFAULT']['SOUND_BATTERY_HIGH']
 
-# Get battery data
-battery = psutil.sensors_battery()
+# Default battery levels in percents
+MIN_PERCENT = int(config['DEFAULT']['MIN_PERCENT'])
+MAX_PERCENT = int(config['DEFAULT']['MAX_PERCENT'])
 
-# Set previous percent to current battery level
-prev_percent = battery.percent
+# Default check interval im minutes
+CHECK_INTERVAL = int(config['DEFAULT']['CHECK_INTERVAL'])
 
-# Try to detect if the device is plugged
-is_charging = True if battery.power_plugged else False
-
-# TODO: store settings in the settings file
-# TODO: add tray icon and GUI for settings
-
-
-def notify(text, sound_file):
-	"""
-	Shows tray notification and plays sound alarm
-	:param text: text to display
-	:param sound_file: sound alarm to play
-	:return: None
-	"""
-	notification.notify(
-		title="Battery Percentage",
-		message=text,
-		timeout=10
-	)
-
-	playsound(sound_file)
+# TODO: Delete the following strings used for debugging purposes
+if IS_DEBUGGING:
+    CHECK_INTERVAL = 0.3
 
 
-while True:
-	# Refresh battery value each iteration
-	battery = psutil.sensors_battery()
+def get_tray_icon(level, is_charging):
+    if is_charging and level >= 95:
+        image_name = 'battery--exclamation.png'
+    else:
+        if level < 5:
+            image_name = 'battery-empty.png'
+        elif level >= 5 and level <= 20:
+            image_name = 'battery-low.png'
+        elif level > 20 and level <= 80:
+            image_name = 'battery--minus.png'
+        elif level > 80 and level <= 95:
+            image_name = 'battery-full.png'
+        else:
+            image_name = 'battery--exclamation.png'
 
-	# Get battery data into variables
-	percent = battery.percent
-	secs_left = battery.secsleft
-	is_plugged = battery.power_plugged
+    return image_name
 
-	if IS_DEBUGGING:
-		print_debug_message(percent, prev_percent, secs_left, is_plugged)
 
-	# Notify user of low battery
-	if percent < MIN_PERCENT and not is_plugged and not is_charging:
-		message = f'''Battery percent ({percent}%) is below minimum ({MAX_PERCENT}%).
-Please connect the power chord.'''
-		notify(message, SOUND_BATTERY_LOW)
+def get_time_left_str(secs_left):
+    if secs_left == psutil.POWER_TIME_UNKNOWN:
+        time_left_str = 'unknown'
+    elif secs_left == psutil.POWER_TIME_UNLIMITED:
+        time_left_str = 'unlimited'
+    else:
+        time_left_str = str(timedelta(seconds=secs_left))
+    return time_left_str
 
-	# Notify user of high battery
-	elif (percent > MAX_PERCENT or percent == 100) and is_plugged and is_charging:
-		message = f'''Battery percent ({percent}%) exceeds maximum ({MAX_PERCENT}%).
-Please disconnect the power chord.'''
-		notify(message, SOUND_BATTERY_HIGH)
-	
-	# Check each CHECK_INTERVAL minutes
-	time.sleep(60 * CHECK_INTERVAL)
 
+class App:
+    def __init__(self):
+        # Create a Qt application
+        self.app = QApplication(sys.argv)
+        # Prevent app from exiting when the window is closed
+        self.app.setQuitOnLastWindowClosed(False)
+
+        # Create a settings dialog
+        self.dialog = QDialog()
+
+        # Create menu
+        menu = QMenu()
+        # settingAction = menu.addAction("Settings")
+        # settingAction.triggered.connect(self.setting)
+        exitAction = menu.addAction("Exit")
+        exitAction.triggered.connect(sys.exit)
+
+        # Create and start timer
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.check_battery)
+        self.timer.start(int(CHECK_INTERVAL * 3600))
+
+        # Get initial battery data
+        self.battery = psutil.sensors_battery()
+        # Store current percent to detect the state
+        self.prev_percent = self.battery.percent
+
+        # Create tray icon
+        icon = QIcon(os.path.join('res', 'icons', 'battery-full.png'))
+        self.tray = QSystemTrayIcon()
+        self.tray.setIcon(icon)
+        self.tray.setContextMenu(menu)
+        self.tray.setToolTip(f'Time left: {get_time_left_str(self.battery.secsleft)} ({self.battery.percent} %)')
+        self.tray.show()
+
+    def check_battery(self):
+        # Check current data
+        self.battery = psutil.sensors_battery()
+        percent = self.battery.percent
+        is_plugged = True if self.battery.power_plugged else False
+        self.tray.setIcon(QIcon(os.path.join('res', 'icons', get_tray_icon(percent, is_plugged))))
+
+        if IS_DEBUGGING:
+            print_debug_message(percent, self.prev_percent, self.battery.secsleft, is_plugged)
+
+        # Set tray tooltip
+        self.tray.setToolTip(f'Time left: {get_time_left_str(self.battery.secsleft)} ({self.battery.percent} %)')
+
+        # Check for low or high battery
+        is_charging = self.battery.power_plugged or percent > self.prev_percent
+
+        # Notify user of low battery
+        if percent < MIN_PERCENT and not is_plugged and not is_charging:
+            message = f'''Battery percent ({percent}%) is below minimum ({MAX_PERCENT}%).
+    Please connect the power chord.'''
+            self.notify(APP_TITLE, message, SOUND_BATTERY_LOW)
+
+        # Notify user of high battery
+        elif (percent > MAX_PERCENT or percent == 100) and is_plugged and is_charging:
+            message = f'''Battery percent ({percent}%) exceeds maximum ({MAX_PERCENT}%).
+    Please disconnect the power chord.'''
+            self.notify(APP_TITLE, message, SOUND_BATTERY_HIGH)
+
+        # Update previous percent with current data
+        self.prev_percent = percent
+
+    def run(self):
+        # Enter Qt application main loop
+        self.app.exec()
+        sys.exit()
+
+    # TODO: Create GUI for settings
+    # def setting(self):
+    #     self.dialog.setWindowTitle("Setting Dialog")
+    #     self.dialog.show()
+
+    def notify(self, title, text, sound):
+        self.tray.showMessage(title, text)
+        playsound(sound)
+
+
+if __name__ == "__main__":
+    app = App()
+    app.run()

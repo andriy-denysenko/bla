@@ -33,6 +33,7 @@ Percent: {percent}, time left: {time_left_str}
 {is_charging_str} {power_plugged_str}
 
 percent: {percent}
+prev_percent: {prev_percent}
 secs_left: {secs_left}
 power_plugged: {is_plugged}
 '''
