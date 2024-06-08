@@ -10,8 +10,9 @@ from playsound import playsound
 
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from PySide6.QtCore import QTimer
+from PySide6.QtCore import QTimer, QLocale
 
+from SettingsDialog import SettingsDialog
 from ui_SettingsDialog import Ui_Dialog
 from debug import print_debug_message
 
@@ -19,7 +20,12 @@ from debug import print_debug_message
 # Debug flag
 IS_DEBUGGING = True
 
-APP_TITLE = 'Battery Level Alert'
+APP_TITLE = 'Battery percent Alert'
+
+ROOT_DIR = os.path.dirname(__file__)
+RESOURCES_DIR = os.path.join(ROOT_DIR, 'res')
+SOUNDS_DIR = os.path.join(RESOURCES_DIR, 'sounds')
+ICONS_DIR = os.path.join(RESOURCES_DIR, 'icons')
 
 # Read or create configuration
 config_file_name = 'settings.ini'
@@ -27,8 +33,8 @@ config = configparser.ConfigParser()
 
 if not os.path.exists('settings.ini'):
     config['DEFAULT'] = {
-        'SOUND_BATTERY_LOW': os.path.join('res', 'mixkit-alert-alarm-1005.wav'),
-        'SOUND_BATTERY_HIGH': os.path.join('res', 'alarm-no3-14864.mp3'),
+        'SOUND_BATTERY_LOW': os.path.join(SOUNDS_DIR, 'mixkit-alert-alarm-1005.wav'),
+        'SOUND_BATTERY_HIGH': os.path.join(SOUNDS_DIR, 'alarm-no3-14864.mp3'),
         'CHECK_INTERVAL': '3',
         'MIN_PERCENT': '15',
         'MAX_PERCENT': '95'
@@ -43,7 +49,7 @@ config.read(config_file_name)
 SOUND_BATTERY_LOW = config['DEFAULT']['SOUND_BATTERY_LOW']
 SOUND_BATTERY_HIGH = config['DEFAULT']['SOUND_BATTERY_HIGH']
 
-# Default battery levels in percents
+# Default battery percents in percents
 MIN_PERCENT = int(config['DEFAULT']['MIN_PERCENT'])
 MAX_PERCENT = int(config['DEFAULT']['MAX_PERCENT'])
 
@@ -51,26 +57,26 @@ MAX_PERCENT = int(config['DEFAULT']['MAX_PERCENT'])
 CHECK_INTERVAL = int(config['DEFAULT']['CHECK_INTERVAL'])
 
 # TODO: Delete the following strings used for debugging purposes
-if IS_DEBUGGING:
-    CHECK_INTERVAL = 0.3
+# if IS_DEBUGGING:
+#     CHECK_INTERVAL = 0.3
 
 
-def get_tray_icon(level, is_charging):
-    if is_charging and level >= 95:
+def get_tray_icon(percent, is_charging):
+    if is_charging and percent >= 95:
         image_name = 'battery--exclamation.png'
     else:
-        if level < 5:
+        if percent < 5:
             image_name = 'battery-empty.png'
-        elif level >= 5 and level <= 20:
+        elif percent >= 5 and percent <= 20:
             image_name = 'battery-low.png'
-        elif level > 20 and level <= 80:
+        elif percent > 20 and percent <= 80:
             image_name = 'battery--minus.png'
-        elif level > 80 and level <= 95:
-            image_name = 'battery-full.png'
+        elif percent > 80 and percent <= 95:
+            image_name = 'battery-high.png'
         else:
             image_name = 'battery--exclamation.png'
 
-    return image_name
+    return os.path.join(ICONS_DIR, image_name)
 
 
 def get_time_left_str(secs_left):
@@ -82,17 +88,6 @@ def get_time_left_str(secs_left):
         time_left_str = str(timedelta(seconds=secs_left))
     return time_left_str
 
-
-class SettingsDialog(QMainWindow, Ui_Dialog):
-    def __init__(self):
-        super().__init__()
-        self.setupUi(self)
-
-    def accept(self):
-        pass
-
-    def reject(self):
-        pass
 
 class App:
     def __init__(self):
@@ -122,9 +117,9 @@ class App:
         self.prev_percent = self.battery.percent
 
         # Create tray icon
-        icon = QIcon(os.path.join('res', 'icons', 'battery-full.png'))
         self.tray = QSystemTrayIcon()
-        self.tray.setIcon(icon)
+        is_plugged = True if self.battery.power_plugged else False
+        self.tray.setIcon(QIcon(get_tray_icon(self.battery.percent, is_plugged)))
         self.tray.setContextMenu(menu)
         self.tray.setToolTip(f'Time left: {get_time_left_str(self.battery.secsleft)} ({self.battery.percent} %)')
         self.tray.show()
@@ -134,7 +129,7 @@ class App:
         self.battery = psutil.sensors_battery()
         percent = self.battery.percent
         is_plugged = True if self.battery.power_plugged else False
-        self.tray.setIcon(QIcon(os.path.join('res', 'icons', get_tray_icon(percent, is_plugged))))
+        self.tray.setIcon(QIcon(get_tray_icon(percent, is_plugged)))
 
         if IS_DEBUGGING:
             print_debug_message(percent, self.prev_percent, self.battery.secsleft, is_plugged)
@@ -173,6 +168,11 @@ class App:
     # max_percent = 95
     def setting(self):
         self.dialog.setWindowTitle("Settings")
+        self.dialog.set_check_interval(CHECK_INTERVAL)
+        self.dialog.set_min_percent(MIN_PERCENT)
+        self.dialog.set_max_percent(MAX_PERCENT)
+        self.dialog.set_low_alarm(SOUND_BATTERY_LOW)
+        self.dialog.set_high_alarm(SOUND_BATTERY_HIGH)
         self.dialog.show()
 
     def notify(self, title, text, sound):

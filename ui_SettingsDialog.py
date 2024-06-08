@@ -28,17 +28,11 @@ class Ui_Dialog(object):
         self.gridLayout = QGridLayout(Dialog)
         self.gridLayout.setObjectName(u"gridLayout")
 
-        self.edt_low_alarm = QLineEdit(Dialog)
-        self.edt_low_alarm.setObjectName(u"edt_low_alarm")
-        self.edt_low_alarm.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+        self.label_check_interval = QLabel(Dialog)
+        self.label_check_interval.setObjectName(u"label_check_interval")
+        self.label_check_interval.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
 
-        self.gridLayout.addWidget(self.edt_low_alarm, 3, 1)
-
-        self.label_5 = QLabel(Dialog)
-        self.label_5.setObjectName(u"label_5")
-        self.label_5.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
-
-        self.gridLayout.addWidget(self.label_5, 4, 0)
+        self.gridLayout.addWidget(self.label_check_interval, 0, 0)
 
         self.sl_check_interval = QSlider(Dialog)
         self.sl_check_interval.setObjectName(u"sl_check_interval")
@@ -51,41 +45,51 @@ class Ui_Dialog(object):
 
         self.gridLayout.addWidget(self.sl_check_interval, 0, 1)
 
-        self.label_check_interval = QLabel(Dialog)
-        self.label_check_interval.setObjectName(u"label_check_interval")
-        self.label_check_interval.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
 
-        self.gridLayout.addWidget(self.label_check_interval, 0, 0)
+        self.edt_low_alarm = QLineEdit(Dialog)
+        self.edt_low_alarm.setObjectName(u"edt_low_alarm")
+        self.edt_low_alarm.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
 
-        self.sl_max_level = QSlider(Dialog)
-        self.sl_max_level.setObjectName(u"sl_max_level")
-        self.sl_max_level.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
-        self.sl_max_level.setMinimum(70)
-        self.sl_max_level.setMaximum(100)
-        self.sl_max_level.setValue(80)
-        self.sl_max_level.setOrientation(Qt.Horizontal)
-        self.sl_max_level.setTickPosition(QSlider.TicksAbove)
-        self.sl_max_level.setTickInterval(1)
+        self.gridLayout.addWidget(self.edt_low_alarm, 3, 1)
 
-        self.gridLayout.addWidget(self.sl_max_level, 2, 1)
+        self.label_high_alarm = QLabel(Dialog)
+        self.label_high_alarm.setObjectName(u"label_high_alarm")
+        self.label_high_alarm.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
 
-        self.label_3 = QLabel(Dialog)
-        self.label_3.setObjectName(u"label_3")
-        self.label_3.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+        self.gridLayout.addWidget(self.label_high_alarm, 4, 0)
 
-        self.gridLayout.addWidget(self.label_3, 2, 0)
 
-        self.edt_full_alarm = QLineEdit(Dialog)
-        self.edt_full_alarm.setObjectName(u"edt_full_alarm")
-        self.edt_full_alarm.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
 
-        self.gridLayout.addWidget(self.edt_full_alarm, 4, 1)
 
-        self.label_min_level = QLabel(Dialog)
-        self.label_min_level.setObjectName(u"label_min_level")
-        self.label_min_level.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+        self.sl_max_percent = QSlider(Dialog)
+        self.sl_max_percent.setObjectName(u"sl_max_percent")
+        self.sl_max_percent.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+        self.sl_max_percent.setMinimum(70)
+        self.sl_max_percent.setMaximum(100)
+        self.sl_max_percent.setValue(80)
+        self.sl_max_percent.setOrientation(Qt.Horizontal)
+        self.sl_max_percent.setTickPosition(QSlider.TicksAbove)
+        self.sl_max_percent.setTickInterval(1)
 
-        self.gridLayout.addWidget(self.label_min_level, 1, 0)
+        self.gridLayout.addWidget(self.sl_max_percent, 2, 1)
+
+        self.label_max_percent = QLabel(Dialog)
+        self.label_max_percent.setObjectName(u"label_max_percent")
+        self.label_max_percent.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+
+        self.gridLayout.addWidget(self.label_max_percent, 2, 0)
+
+        self.edt_high_alarm = QLineEdit(Dialog)
+        self.edt_high_alarm.setObjectName(u"edt_high_alarm")
+        self.edt_high_alarm.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+
+        self.gridLayout.addWidget(self.edt_high_alarm, 4, 1)
+
+        self.label_min_percent = QLabel(Dialog)
+        self.label_min_percent.setObjectName(u"label_min_percent")
+        self.label_min_percent.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+
+        self.gridLayout.addWidget(self.label_min_percent, 1, 0)
 
         self.buttonBox = QDialogButtonBox(Dialog)
         self.buttonBox.setObjectName(u"buttonBox")
@@ -95,22 +99,22 @@ class Ui_Dialog(object):
 
         self.gridLayout.addWidget(self.buttonBox, 5, 0)
 
-        self.sl_min_level = QSlider(Dialog)
-        self.sl_min_level.setObjectName(u"sl_min_level")
-        self.sl_min_level.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
-        self.sl_min_level.setMaximum(30)
-        self.sl_min_level.setValue(20)
-        self.sl_min_level.setOrientation(Qt.Horizontal)
-        self.sl_min_level.setTickPosition(QSlider.TicksAbove)
-        self.sl_min_level.setTickInterval(1)
+        self.sl_min_percent = QSlider(Dialog)
+        self.sl_min_percent.setObjectName(u"sl_min_percent")
+        self.sl_min_percent.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+        self.sl_min_percent.setMaximum(30)
+        self.sl_min_percent.setValue(20)
+        self.sl_min_percent.setOrientation(Qt.Horizontal)
+        self.sl_min_percent.setTickPosition(QSlider.TicksAbove)
+        self.sl_min_percent.setTickInterval(1)
 
-        self.gridLayout.addWidget(self.sl_min_level, 1, 1)
+        self.gridLayout.addWidget(self.sl_min_percent, 1, 1)
 
-        self.label_4 = QLabel(Dialog)
-        self.label_4.setObjectName(u"label_4")
-        self.label_4.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+        self.label_low_alarm = QLabel(Dialog)
+        self.label_low_alarm.setObjectName(u"label_low_alarm")
+        self.label_low_alarm.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
 
-        self.gridLayout.addWidget(self.label_4, 3, 0)
+        self.gridLayout.addWidget(self.label_low_alarm, 3, 0)
 
         self.btn_browse_low_alarm = QPushButton(Dialog)
         self.btn_browse_low_alarm.setObjectName(u"btn_browse_low_alarm")
@@ -118,49 +122,53 @@ class Ui_Dialog(object):
 
         self.gridLayout.addWidget(self.btn_browse_low_alarm, 3, 2)
 
-        self.btn_browse_full_alarm = QPushButton(Dialog)
-        self.btn_browse_full_alarm.setObjectName(u"btn_browse_full_alarm")
-        self.btn_browse_full_alarm.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+        self.btn_browse_high_alarm = QPushButton(Dialog)
+        self.btn_browse_high_alarm.setObjectName(u"btn_browse_high_alarm")
+        self.btn_browse_high_alarm.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
 
-        self.gridLayout.addWidget(self.btn_browse_full_alarm, 4, 2)
+        self.gridLayout.addWidget(self.btn_browse_high_alarm, 4, 2)
 
         self.label_check_interval_value = QLabel(Dialog)
         self.label_check_interval_value.setObjectName(u"label_check_interval_value")
 
         self.gridLayout.addWidget(self.label_check_interval_value, 0, 2)
 
-        self.label_min_level_value = QLabel(Dialog)
-        self.label_min_level_value.setObjectName(u"label_min_level_value")
+        self.label_min_percent_value = QLabel(Dialog)
+        self.label_min_percent_value.setObjectName(u"label_min_percent_value")
 
-        self.gridLayout.addWidget(self.label_min_level_value, 1, 2)
+        self.gridLayout.addWidget(self.label_min_percent_value, 1, 2)
 
-        self.label_max_level_value = QLabel(Dialog)
-        self.label_max_level_value.setObjectName(u"label_max_level_value")
+        self.label_max_percent_value = QLabel(Dialog)
+        self.label_max_percent_value.setObjectName(u"label_max_percent_value")
 
-        self.gridLayout.addWidget(self.label_max_level_value, 2, 2)
+        self.gridLayout.addWidget(self.label_max_percent_value, 2, 2)
+
+        self.widget = QWidget()
+        self.widget.setLayout(self.gridLayout)
+        self.setCentralWidget(self.widget)
 
 
         self.retranslateUi(Dialog)
         self.buttonBox.accepted.connect(Dialog.accept)
         self.buttonBox.rejected.connect(Dialog.reject)
         self.sl_check_interval.valueChanged.connect(self.label_check_interval_value.setNum)
-        self.sl_min_level.valueChanged.connect(self.label_min_level_value.setNum)
-        self.sl_max_level.valueChanged.connect(self.label_max_level_value.setNum)
+        self.sl_min_percent.valueChanged.connect(self.label_min_percent_value.setNum)
+        self.sl_max_percent.valueChanged.connect(self.label_max_percent_value.setNum)
 
         QMetaObject.connectSlotsByName(Dialog)
     # setupUi
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
-        self.label_5.setText(QCoreApplication.translate("Dialog", u"Batery full alarm", None))
-        self.label_check_interval.setText(QCoreApplication.translate("Dialog", u"Check interval, min", None))
-        self.label_3.setText(QCoreApplication.translate("Dialog", u"Max. battery level, 70%\u2013100%", None))
-        self.label_min_level.setText(QCoreApplication.translate("Dialog", u"Min. battery level, 0%\u201330%", None))
-        self.label_4.setText(QCoreApplication.translate("Dialog", u"Batery low alarm", None))
+        self.label_high_alarm.setText(QCoreApplication.translate("Dialog", u"Batery high alarm", None))
+        self.label_check_interval.setText(QCoreApplication.translate("Dialog", u"Check interval, minutes", None))
+        self.label_max_percent.setText(QCoreApplication.translate("Dialog", u"Max. battery percent, 70%\u2013100%", None))
+        self.label_min_percent.setText(QCoreApplication.translate("Dialog", u"Min. battery percent, 0%\u201330%", None))
+        self.label_low_alarm.setText(QCoreApplication.translate("Dialog", u"Batery low alarm", None))
         self.btn_browse_low_alarm.setText(QCoreApplication.translate("Dialog", u"...", None))
-        self.btn_browse_full_alarm.setText(QCoreApplication.translate("Dialog", u"...", None))
+        self.btn_browse_high_alarm.setText(QCoreApplication.translate("Dialog", u"...", None))
         self.label_check_interval_value.setText(QCoreApplication.translate("Dialog", u"3", None))
-        self.label_min_level_value.setText(QCoreApplication.translate("Dialog", u"20%", None))
-        self.label_max_level_value.setText(QCoreApplication.translate("Dialog", u"80%", None))
+        self.label_min_percent_value.setText(QCoreApplication.translate("Dialog", u"20%", None))
+        self.label_max_percent_value.setText(QCoreApplication.translate("Dialog", u"80%", None))
     # retranslateUi
 
