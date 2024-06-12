@@ -34,25 +34,25 @@ APP_TITLE = _('Battery level Alert')
 
 
 def get_tray_icon(percent, is_charging):
-    if is_charging and percent >= 95:
-        image_name = 'battery--exclamation.png'
+    if is_charging:
+        image_name = 'battery-charge.png'
     else:
-        if percent < 5:
-            image_name = 'battery-empty.png'
-        elif percent >= 5 and percent <= 20:
-            image_name = 'battery-low.png'
-        elif percent > 20 and percent <= 80:
+        if percent >= 95:
+            image_name = 'battery-full.png'
+        elif percent >= 20:
             image_name = 'battery--minus.png'
-        elif percent > 80 and percent <= 95:
-            image_name = 'battery-high.png'
+        elif percent > 5:
+            image_name = 'battery-low.png'
         else:
-            image_name = 'battery--exclamation.png'
+            image_name = 'battery-empty.png'
+
     print(image_name)
 
     return os.path.join(ICONS_DIR, image_name)
 
 
 def get_time_left_str(secs_left):
+    # TODO: fix capital letter and translations for unlimited and unknown
     if secs_left == psutil.POWER_TIME_UNKNOWN:
         time_left_str = _('unknown')
     elif secs_left == psutil.POWER_TIME_UNLIMITED:
