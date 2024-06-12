@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from PySide6.QtCore import (QMetaObject, Qt)
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (QDialogButtonBox,
                                QGridLayout, QLabel, QLineEdit, QPushButton,
                                QSpinBox, QWidget, QFileDialog, QMainWindow)
@@ -9,7 +10,7 @@ from config import *
 from i18n import _
 
 
-# TODO: implement locale selection
+# TODO: implement locale selection and get info about packaging for different platforms
 # TODO: implement GUI icon
 
 class Ui_Dialog(QMainWindow):
@@ -19,6 +20,7 @@ class Ui_Dialog(QMainWindow):
         if not self.objectName():
             self.setObjectName(u"Dialog")
         self.resize(586, 300)
+        self.setWindowIcon(QIcon(os.path.join(ICONS_DIR, 'battery--pencil.png')))
         self.gridLayout = QGridLayout(self)
         self.gridLayout.setObjectName(u"gridLayout")
 
@@ -73,7 +75,7 @@ class Ui_Dialog(QMainWindow):
         self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
         # TODO: Localize buttonBox
         self.buttonBox.setStandardButtons(
-            QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Ok)
+            QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok)
 
         self.gridLayout.addWidget(self.buttonBox, 5, 0)
 
@@ -112,6 +114,7 @@ class Ui_Dialog(QMainWindow):
         self.btn_browse_low_alarm.clicked.connect(self.get_low_alarm)
 
         QMetaObject.connectSlotsByName(self)
+
     # setupUi
 
     def accept(self):
@@ -150,11 +153,11 @@ class Ui_Dialog(QMainWindow):
         dlg.setAcceptMode(QFileDialog.AcceptMode.AcceptOpen)
         set_filter = _('Sound files (*.wav *.mp3)')
         result = dlg.getOpenFileName(self,
-                                _('Battery high alarm'),
-                                SOUNDS_DIR,
-                                'Sound files (*.wav *.mp3);;All files (*.*)',
-                                set_filter)
-        if(result[0]):
+                                     _('Battery high alarm'),
+                                     SOUNDS_DIR,
+                                     'Sound files (*.wav *.mp3);;All files (*.*)',
+                                     set_filter)
+        if (result[0]):
             self.edt_low_alarm.setText(result[0])
 
     def get_low_alarm(self):
@@ -163,10 +166,10 @@ class Ui_Dialog(QMainWindow):
         dlg.setAcceptMode(QFileDialog.AcceptMode.AcceptOpen)
         set_filter = _('Sound files (*.wav *.mp3)')
         result = dlg.getOpenFileName(self,
-                                _('Battery low alarm'),
-                                SOUNDS_DIR,
-                                'Sound files (*.wav *.mp3);;All files (*.*)',
-                                set_filter)
+                                     _('Battery low alarm'),
+                                     SOUNDS_DIR,
+                                     'Sound files (*.wav *.mp3);;All files (*.*)',
+                                     set_filter)
         if result[0]:
             self.edt_low_alarm.setText(result[0])
 
@@ -180,4 +183,3 @@ class Ui_Dialog(QMainWindow):
         self.btn_browse_low_alarm.setText(_("..."))
         self.btn_browse_high_alarm.setText(_("..."))
     # retranslateUi
-

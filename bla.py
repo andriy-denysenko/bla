@@ -52,7 +52,6 @@ def get_tray_icon(percent, is_charging):
 
 
 def get_time_left_str(secs_left):
-    # TODO: fix capital letter and translations for unlimited and unknown
     if secs_left == psutil.POWER_TIME_UNKNOWN:
         time_left_str = _('unknown')
     elif secs_left == psutil.POWER_TIME_UNLIMITED:
@@ -138,7 +137,6 @@ class App:
         self.app.exec()
         sys.exit()
 
-    # TODO: Implement saving settings
     def setting(self):
         self.dialog.set_check_interval(CHECK_INTERVAL)
         self.dialog.set_min_percent(MIN_PERCENT)
